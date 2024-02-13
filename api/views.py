@@ -8,7 +8,7 @@ from django.views.decorators.csrf import ensure_csrf_cookie
 from django.views.decorators.http import require_POST
 
 @require_POST
-def login_views(request):
+def login_view(request):
     data = json.loads(request.body)
     username = data.get("username")
     password = data.get("password")
@@ -27,3 +27,13 @@ def logout_view(request):
     logout(request)
     return JsonResponse({"detail":"Succesfully logged out!"})
 
+@ensure_csrf_cookie
+def session_view(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({"isauthenticated": False})
+    return JsonResponse({"isauthenticated": True})
+
+def whoami_view(request):
+     if not request.user.is_authenticated:
+        return JsonResponse({"isauthenticated": False})
+     return JsonResponse({"username":request.user.username})
